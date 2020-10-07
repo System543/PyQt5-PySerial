@@ -27,7 +27,7 @@
   * Data acquisition card(ART DAM-3158)
   * USB to Serial Adaptor(DAM-3232N)
   * Carbon dioxide sensor which range is 0~2000ppm
-* Key Feature
+## Key Feature
   * Make UI with PyQt5
   * Serial communicate via PySerial
   * The decoder of serial byte is realized
