@@ -21,19 +21,19 @@
 
 ## Involved
 * Software(Python)
- * PyQt5
- * PySerial
+  * PyQt5
+  * PySerial
 * Hardware
- * Data acquisition card(ART DAM-3158)
- * USB to Serial Adaptor(DAM-3232N)
- * Carbon dioxide sensor which range is 0~2000ppm
+  * Data acquisition card(ART DAM-3158)
+  * USB to Serial Adaptor(DAM-3232N)
+  * Carbon dioxide sensor which range is 0~2000ppm
 * Key Feature
- * Make UI with PyQt5
- * Serial communicate via PySerial
- * The decoder of serial byte is realized
- * Sampling
- * Save data automatically
- * Output via text and graphic
+  * Make UI with PyQt5
+  * Serial communicate via PySerial
+  * The decoder of serial byte is realized
+  * Sampling
+  * Save data automatically
+  * Output via text and graphic
  
 ![UI](https://github.com/System543/PyQt5-PySerial/tree/main/resources/show.png)
 
