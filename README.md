@@ -15,3 +15,5 @@
   * 采样开始与停止
   * 自动保存数据（可设置保存条件）
   * 输出显示（图像和数据）
+
+![UI界面](https://github.com/System543/PyQt5-PySerial/tree/main/resources/show.png)
