@@ -16,7 +16,7 @@
   * 自动保存数据（可设置保存条件）
   * 输出显示（图像和数据）
 
-![UI界面](https://github.com/System543/PyQt5-PySerial/tree/main/resources/show.png)
+![UI界面](https://github.com/XiubenWu/PyQt5-PySerial/tree/main/resources/show.png)
 
 
 ## Involved
@@ -35,6 +35,6 @@
   * Save data automatically
   * Output via text and graphic
  
-![UI](https://github.com/System543/PyQt5-PySerial/tree/main/resources/show.png)
+![UI](https://github.com/XiubenWu/PyQt5-PySerial/tree/main/resources/show.png)
 
 
