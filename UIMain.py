@@ -4,7 +4,7 @@ import sys
 import time
 import datetime
 from PyQt5.QtWidgets import QApplication, QDialog, QMessageBox, QFileDialog, QGraphicsScene
-from PyQt5.QtCore import QTimer, QThread, pyqtSignal
+from PyQt5.QtCore import QThread, pyqtSignal
 from PyQt5.QtGui import QIcon
 from myui import Ui_MainWindow
 
@@ -19,6 +19,7 @@ dataList = []
 displayList = []
 # graphicList = []
 displayLimit = 20
+manulSaveFlag = False
 
 
 # graphicLimit = 20
@@ -32,7 +33,7 @@ class MainWindow(QDialog, Ui_MainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
         self.setupUi(self)
-        self.setWindowIcon(QIcon("./picture/icon.ico"))
+        self.setWindowIcon(QIcon(":/icon/picture/icon.ico"))
 
         self.spThread = ""
         self.autoSaveThread = ""
@@ -87,9 +88,10 @@ class MainWindow(QDialog, Ui_MainWindow):
                 self.spThread.start()
 
                 self.autoSaveThread = SaveThread(self.savePath.currentText(), saveCount)
+                self.autoSaveThread.save_error_flag.connect(self.save_error_box)
                 self.autoSaveThread.start()
         except:
-            if self.serialPort == "":
+            if self.serialPort == "" or self.serialPort is False:
                 self.serialPort = SerialPort.open_port(comIndex, baudrate)
             elif not self.serialPort.is_open:
                 self.serialPort = SerialPort.open_port(comIndex, baudrate)
@@ -99,9 +101,9 @@ class MainWindow(QDialog, Ui_MainWindow):
                 return 0
             self.spThread = SerialPortThread(sampleTime, self.serialPort)
             self.spThread.get_data_signal.connect(self.display_text)
-            self.spThread.start()
-
             self.autoSaveThread = SaveThread(self.savePath.currentText(), saveCount)
+            self.autoSaveThread.save_error_flag.connect(self.save_error_box)
+            self.spThread.start()
             self.autoSaveThread.start()
 
         self.spThread.sampleFlag = True
@@ -149,13 +151,15 @@ class MainWindow(QDialog, Ui_MainWindow):
         # print(path)
 
     def save_manul(self):
-        global dataList
         try:
-            Saver.save_data(self.savePath.currentText(), dataList)
-            dataList = []
+            self.autoSaveThread.manulSaveFlag = True
         except:
-            Saver.save_data("", dataList)
-            dataList = []
+            msg_box = QMessageBox()
+            msg_box.warning(self, "提示", "保存错误，请先开始采样", QMessageBox.Ok)
+
+    def save_error_box(self):
+        msg_box = QMessageBox()
+        msg_box.warning(self, "提示", "保存错误，检查保存路径文件是否损坏或被占用", QMessageBox.Ok)
 
 
 class FigureShow(FigureCanvasQTAgg):
@@ -247,6 +251,8 @@ class SerialPortThread(QThread):
 
 
 class SaveThread(QThread):
+    save_error_flag = pyqtSignal()
+
     def __init__(self, path, saveCount=20):
         """
         数据保存线程
@@ -258,19 +264,40 @@ class SaveThread(QThread):
         self.saveCount = saveCount
         self.sampleFlag = False
         self.quitFlag = False
+        self.manulSaveFlag = False
 
     def run(self):
         global dataList
         while True:
-            time.sleep(5)
             if self.sampleFlag:
                 try:
                     if len(dataList) > self.saveCount:
-                        Saver.save_data(self.path, dataList)
+                        saveDataList = dataList
                         dataList = []
+                        Saver.save_data(self.path, saveDataList)
                 except:
-                    Saver.save_data("", dataList)
+                    try:
+                        saveDataList = dataList
+                        dataList = []
+                        Saver.save_data("", saveDataList)
+                    except:
+                        self.save_error_flag.emit()
+                        print("error")
+
+            if self.manulSaveFlag:
+                try:
+                    saveDataList = dataList
                     dataList = []
+                    Saver.save_data(self.path, saveDataList)
+                except:
+                    try:
+                        saveDataList = dataList
+                        dataList = []
+                        Saver.save_data("", saveDataList)
+                    except:
+                        self.save_error_flag.emit()
+                        print("error")
+                self.manulSaveFlag = False
             if self.quitFlag:
                 break
 
