@@ -11,8 +11,8 @@ def open_port(com=2, baudrate=9600):
     """
     splist = list(serial.tools.list_ports.comports())
     comList = ["COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9"]
-    if len(splist) == 0:
-        raise IOError("未找到端口")
+    # if len(splist) == 0:
+    #     raise IOError("未找到端口")
     try:
         sp = serial.Serial(comList[com], baudrate, timeout=0.1)
     except:
